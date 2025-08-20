@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { AppProvider } from './context/AppProvider';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
+import Pantry from './pages/Pantry';
+import Planning from './pages/Planning';
+import TodoList from './pages/TodoList';
 
 function App(): React.ReactNode {
   const [currentPage, setCurrentPage] = useState('home');
@@ -11,11 +14,11 @@ function App(): React.ReactNode {
       case 'home':
         return <Home />;
       case 'pantry':
-        return <div>Page Garde-manger (à implémenter)</div>;
+        return <Pantry />;
       case 'planning':
-        return <div>Page Planning (à implémenter)</div>;
+        return <Planning />;
       case 'todo':
-        return <div>Page À faire cette semaine (à implémenter)</div>;
+        return <TodoList />;
       default:
         return <Home />;
     }
