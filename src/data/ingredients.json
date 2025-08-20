@@ -1,0 +1,202 @@
+[
+  {
+    "id": "1",
+    "name": "Tomates",
+    "quantity": 0,
+    "unit": "kg",
+    "expirationDate": "2025-08-27T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "name": "Oignons",
+    "quantity": 0,
+    "unit": "kg",
+    "expirationDate": "2025-09-03T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "name": "Ail",
+    "quantity": 0,
+    "unit": "pieces",
+    "expirationDate": "2025-09-10T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "4",
+    "name": "Carottes",
+    "quantity": 0,
+    "unit": "kg",
+    "expirationDate": "2025-08-30T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "5",
+    "name": "Pommes de terre",
+    "quantity": 0,
+    "unit": "kg",
+    "expirationDate": "2025-09-10T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "6",
+    "name": "Poulet",
+    "quantity": 0,
+    "unit": "kg",
+    "expirationDate": "2025-08-23T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "7",
+    "name": "Bœuf haché",
+    "quantity": 0,
+    "unit": "kg",
+    "expirationDate": "2025-08-23T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "8",
+    "name": "Saumon",
+    "quantity": 0,
+    "unit": "kg",
+    "expirationDate": "2025-08-22T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "9",
+    "name": "Œufs",
+    "quantity": 0,
+    "unit": "pieces",
+    "expirationDate": "2025-09-17T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "10",
+    "name": "Lait",
+    "quantity": 0,
+    "unit": "l",
+    "expirationDate": "2025-08-27T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "11",
+    "name": "Fromage râpé",
+    "quantity": 0,
+    "unit": "g",
+    "expirationDate": "2025-09-03T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "12",
+    "name": "Pâtes",
+    "quantity": 0,
+    "unit": "kg",
+    "expirationDate": "2027-08-20T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "13",
+    "name": "Riz",
+    "quantity": 0,
+    "unit": "kg",
+    "expirationDate": "2027-08-20T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "14",
+    "name": "Pain",
+    "quantity": 0,
+    "unit": "pieces",
+    "expirationDate": "2025-08-23T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "15",
+    "name": "Huile d'olive",
+    "quantity": 0,
+    "unit": "l",
+    "expirationDate": "2026-08-20T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "16",
+    "name": "Sel",
+    "quantity": 0,
+    "unit": "kg",
+    "expirationDate": "2035-08-20T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "17",
+    "name": "Poivre",
+    "quantity": 0,
+    "unit": "g",
+    "expirationDate": "2028-08-20T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "18",
+    "name": "Basilic",
+    "quantity": 0,
+    "unit": "pieces",
+    "expirationDate": "2025-08-27T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "19",
+    "name": "Persil",
+    "quantity": 0,
+    "unit": "pieces",
+    "expirationDate": "2025-08-30T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "20",
+    "name": "Courgettes",
+    "quantity": 0,
+    "unit": "kg",
+    "expirationDate": "2025-08-27T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "21",
+    "name": "Aubergines",
+    "quantity": 0,
+    "unit": "kg",
+    "expirationDate": "2025-08-27T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "22",
+    "name": "Poivrons",
+    "quantity": 0,
+    "unit": "kg",
+    "expirationDate": "2025-08-30T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "23",
+    "name": "Champignons",
+    "quantity": 0,
+    "unit": "g",
+    "expirationDate": "2025-08-25T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "24",
+    "name": "Crème fraîche",
+    "quantity": 0,
+    "unit": "ml",
+    "expirationDate": "2025-09-03T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "25",
+    "name": "Beurre",
+    "quantity": 0,
+    "unit": "g",
+    "expirationDate": "2025-09-10T00:00:00.000Z",
+    "addedDate": "2025-08-20T00:00:00.000Z"
+  }
+]
