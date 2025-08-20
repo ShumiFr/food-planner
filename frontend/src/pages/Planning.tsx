@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAppContext } from '../context/AppProvider';
+import { useAppContext } from '../context/AppProviderApi';
 import type { Recipe, WeeklyPlan } from '../types/types';
 
 type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
@@ -28,13 +28,13 @@ export default function Planning(): React.ReactElement {
    // Filtrer les recettes sélectionnées
    const filteredRecipes = selectedRecipes.filter(recipe => {
       const matchesSearch = recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           recipe.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm.toLowerCase()));
-      
+         recipe.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm.toLowerCase()));
+
       const matchesDifficulty = difficultyFilter === 'all' || recipe.difficulty === difficultyFilter;
-      
+
       return matchesSearch && matchesDifficulty;
-   });   const handleDragStart = (e: React.DragEvent, recipe: Recipe) => {
+   }); const handleDragStart = (e: React.DragEvent, recipe: Recipe) => {
       e.dataTransfer.setData('text/plain', JSON.stringify(recipe));
       e.dataTransfer.effectAllowed = 'move';
    };
@@ -174,11 +174,11 @@ export default function Planning(): React.ReactElement {
                {/* Liste des recettes sélectionnées */}
                <div style={{ padding: '1rem' }}>
                   <h3 style={{ margin: '0 0 1rem 0', fontSize: '1rem' }}>📚 Mes recettes sélectionnées</h3>
-                  
+
                   {selectedRecipes.length === 0 ? (
-                     <div style={{ 
-                        textAlign: 'center', 
-                        padding: '2rem', 
+                     <div style={{
+                        textAlign: 'center',
+                        padding: '2rem',
                         color: '#666',
                         backgroundColor: '#f8f9fa',
                         borderRadius: '8px'
@@ -190,19 +190,19 @@ export default function Planning(): React.ReactElement {
                   ) : (
                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '600px', overflowY: 'auto' }}>
                         {filteredRecipes.map(recipe => (
-                              <div
-                                 key={recipe.id}
-                                 draggable
-                                 onDragStart={(e) => handleDragStart(e, recipe)}
-                                 style={{
-                                    padding: '0.75rem',
-                                    border: '1px solid #ddd',
-                                    borderRadius: '6px',
-                                    backgroundColor: '#fff',
-                                    cursor: 'move',
-                                    transition: 'all 0.2s ease'
-                                 }}
-                                 onMouseEnter={(e) => {
+                           <div
+                              key={recipe.id}
+                              draggable
+                              onDragStart={(e) => handleDragStart(e, recipe)}
+                              style={{
+                                 padding: '0.75rem',
+                                 border: '1px solid #ddd',
+                                 borderRadius: '6px',
+                                 backgroundColor: '#fff',
+                                 cursor: 'move',
+                                 transition: 'all 0.2s ease'
+                              }}
+                              onMouseEnter={(e) => {
                                  e.currentTarget.style.transform = 'translateX(4px)';
                                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
                               }}

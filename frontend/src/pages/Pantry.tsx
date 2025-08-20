@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAppContext } from '../context/AppProvider';
+import { useAppContext } from '../context/AppProviderApi';
 import type { Ingredient } from '../types/types';
 
 export default function Pantry(): React.ReactElement {

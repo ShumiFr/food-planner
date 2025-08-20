@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppProvider } from './context/AppProvider';
+import { AppProvider } from './context/AppProviderApi';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
 import Pantry from './pages/Pantry';
