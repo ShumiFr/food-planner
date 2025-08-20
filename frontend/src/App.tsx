@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AppProvider } from './context/AppProviderApi';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
+import Discover from './pages/Discover';
 import Pantry from './pages/Pantry';
 import Planning from './pages/Planning';
 
@@ -12,6 +13,8 @@ function App(): React.ReactNode {
     switch (currentPage) {
       case 'home':
         return <Home onNavigate={setCurrentPage} />;
+      case 'discover':
+        return <Discover />;
       case 'pantry':
         return <Pantry />;
       case 'planning':

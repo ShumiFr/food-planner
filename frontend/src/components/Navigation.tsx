@@ -8,6 +8,7 @@ interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ currentPage, onPageChange }) => {
    const pages = [
       { id: 'home', label: 'Accueil' },
+      { id: 'discover', label: 'Découvrir' },
       { id: 'pantry', label: 'Garde-manger' },
       { id: 'planning', label: 'Planning' }
    ];
