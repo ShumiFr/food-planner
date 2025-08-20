@@ -19,14 +19,34 @@ export default function Home({ onNavigate }: HomeProps): React.ReactElement {
     return diffDays <= 7 && diffDays >= 0;
   });
 
-  // Filtrer les recettes disponibles selon les ingrédients
-  const availableRecipes = recipes.filter(recipe =>
-    recipe.ingredients.some(ingredient =>
-      ingredients.some(ing =>
-        ing.name.toLowerCase().includes(ingredient.toLowerCase())
-      )
-    )
-  );
+  // Calculer le pourcentage d'ingrédients possédés pour chaque recette
+  const getRecipeMatchPercentage = (recipe: Recipe) => {
+    if (recipe.ingredients.length === 0) return 0;
+    
+    let matchCount = 0;
+    recipe.ingredients.forEach(recipeIngredient => {
+      const hasIngredient = ingredients.some(pantryIngredient =>
+        pantryIngredient.quantity > 0 && (
+          pantryIngredient.name.toLowerCase().includes(recipeIngredient.toLowerCase()) ||
+          recipeIngredient.toLowerCase().includes(pantryIngredient.name.toLowerCase())
+        )
+      );
+      if (hasIngredient) matchCount++;
+    });
+    
+    return Math.round((matchCount / recipe.ingredients.length) * 100);
+  };
+
+  // Filtrer et trier les recettes selon les ingrédients disponibles
+  const availableRecipes = ingredients.length > 0 && ingredients.some(ing => ing.quantity > 0)
+    ? recipes
+        .map(recipe => ({
+          ...recipe,
+          matchPercentage: getRecipeMatchPercentage(recipe)
+        }))
+        .filter(recipe => recipe.matchPercentage > 0)
+        .sort((a, b) => b.matchPercentage - a.matchPercentage)
+    : [];
 
   const handleToggleRecipe = (recipe: Recipe) => {
     const isSelected = selectedRecipes.some(r => r.id === recipe.id);
@@ -94,14 +114,37 @@ export default function Home({ onNavigate }: HomeProps): React.ReactElement {
       <div style={{ display: 'flex', gap: '2rem', marginTop: '2rem' }}>
         {/* Section Recettes */}
         <div style={{ flex: 2 }}>
-          <h2>Recettes suggérées</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2>Recettes suggérées</h2>
+            {availableRecipes.length > 0 && (
+              <div style={{ 
+                backgroundColor: '#e7f3ff', 
+                padding: '0.5rem 1rem', 
+                borderRadius: '20px',
+                fontSize: '0.9rem',
+                color: '#0c5460'
+              }}>
+                {availableRecipes.length} recette(s) disponible(s)
+              </div>
+            )}
+          </div>
           <p style={{ color: '#666', marginBottom: '1rem' }}>
-            Basées sur vos ingrédients disponibles
+            {ingredients.length > 0 && ingredients.some(ing => ing.quantity > 0)
+              ? 'Basées sur vos ingrédients disponibles, triées par pourcentage de compatibilité'
+              : 'Ajoutez des ingrédients à votre garde-manger pour découvrir des recettes personnalisées'
+            }
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
             {availableRecipes.map(recipe => {
               const isSelected = selectedRecipes.some(r => r.id === recipe.id);
+              const matchPercentage = recipe.matchPercentage;
+              const getPercentageColor = (percentage: number) => {
+                if (percentage >= 80) return '#28a745'; // Vert
+                if (percentage >= 50) return '#ffc107'; // Jaune
+                return '#dc3545'; // Rouge
+              };
+              
               return (
               <div key={recipe.id} style={{
                 border: `2px solid ${isSelected ? '#28a745' : '#ddd'}`,
@@ -109,10 +152,45 @@ export default function Home({ onNavigate }: HomeProps): React.ReactElement {
                 padding: '1rem',
                 backgroundColor: isSelected ? '#f8fff8' : '#fff'
               }}>
-                <h3>{recipe.name}</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <h3 style={{ margin: 0 }}>{recipe.name}</h3>
+                  <div style={{
+                    backgroundColor: getPercentageColor(matchPercentage),
+                    color: 'white',
+                    padding: '0.25rem 0.5rem',
+                    borderRadius: '12px',
+                    fontSize: '0.8rem',
+                    fontWeight: 'bold'
+                  }}>
+                    {matchPercentage}%
+                  </div>
+                </div>
+                <p style={{ color: '#666', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+                  {recipe.description}
+                </p>
                 <p><strong>Temps de préparation:</strong> {recipe.prepTime} min</p>
                 <p><strong>Difficulté:</strong> {recipe.difficulty}</p>
-                <p><strong>Ingrédients:</strong> {recipe.ingredients.join(', ')}</p>
+                <p><strong>Ingrédients ({recipe.ingredients.length}):</strong></p>
+                <div style={{ fontSize: '0.8rem', marginBottom: '1rem', maxHeight: '100px', overflowY: 'auto' }}>
+                  {recipe.ingredients.map((ingredient, index) => {
+                    const hasIngredient = ingredients.some(pantryIngredient =>
+                      pantryIngredient.quantity > 0 && (
+                        pantryIngredient.name.toLowerCase().includes(ingredient.toLowerCase()) ||
+                        ingredient.toLowerCase().includes(pantryIngredient.name.toLowerCase())
+                      )
+                    );
+                    return (
+                      <span key={index} style={{
+                        color: hasIngredient ? '#28a745' : '#dc3545',
+                        fontWeight: hasIngredient ? 'bold' : 'normal',
+                        marginRight: '0.5rem'
+                      }}>
+                        {hasIngredient ? '✅' : '❌'} {ingredient}
+                        {index < recipe.ingredients.length - 1 ? ', ' : ''}
+                      </span>
+                    );
+                  })}
+                </div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button
                     onClick={() => handleToggleRecipe(recipe)}
@@ -151,9 +229,33 @@ export default function Home({ onNavigate }: HomeProps): React.ReactElement {
           </div>
 
           {availableRecipes.length === 0 && (
-            <p style={{ color: '#666', fontStyle: 'italic' }}>
-              Ajoutez des ingrédients à votre garde-manger pour voir des recettes suggérées !
-            </p>
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '3rem 2rem',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '8px',
+              border: '1px solid #ddd'
+            }}>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🥘</div>
+              {ingredients.length === 0 || !ingredients.some(ing => ing.quantity > 0) ? (
+                <>
+                  <h3>Aucune recette suggérée</h3>
+                  <p style={{ color: '#666', marginBottom: '1rem' }}>
+                    Ajoutez des ingrédients avec une quantité supérieure à 0 dans votre garde-manger pour découvrir des recettes !
+                  </p>
+                  <p style={{ fontSize: '0.9rem', color: '#888' }}>
+                    💡 Astuce : Plus vous avez d'ingrédients, plus vous verrez de recettes avec un pourcentage élevé.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h3>Aucune recette disponible</h3>
+                  <p style={{ color: '#666' }}>
+                    Vos ingrédients actuels ne correspondent à aucune recette de notre base de données.
+                  </p>
+                </>
+              )}
+            </div>
           )}
         </div>
 
