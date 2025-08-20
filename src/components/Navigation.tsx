@@ -9,8 +9,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage, onPageChange }) =>
    const pages = [
       { id: 'home', label: 'Accueil' },
       { id: 'pantry', label: 'Garde-manger' },
-      { id: 'planning', label: 'Planning' },
-      { id: 'todo', label: 'À faire cette semaine' }
+      { id: 'planning', label: 'Planning' }
    ];
 
    return (

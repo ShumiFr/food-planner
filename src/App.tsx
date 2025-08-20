@@ -4,7 +4,6 @@ import Navigation from './components/Navigation';
 import Home from './pages/Home';
 import Pantry from './pages/Pantry';
 import Planning from './pages/Planning';
-import TodoList from './pages/TodoList';
 
 function App(): React.ReactNode {
   const [currentPage, setCurrentPage] = useState('home');
@@ -12,15 +11,13 @@ function App(): React.ReactNode {
   const renderPage = () => {
     switch (currentPage) {
       case 'home':
-        return <Home />;
+        return <Home onNavigate={setCurrentPage} />;
       case 'pantry':
         return <Pantry />;
       case 'planning':
         return <Planning />;
-      case 'todo':
-        return <TodoList />;
       default:
-        return <Home />;
+        return <Home onNavigate={setCurrentPage} />;
     }
   };
 

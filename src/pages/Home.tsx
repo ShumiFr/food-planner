@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppProvider';
-import type { Recipe } from '../types/types';
 
-export default function Home(): React.ReactElement {
-  const { ingredients, recipes, addRecipeToTodo } = useAppContext();
+interface HomeProps {
+  onNavigate?: (page: string) => void;
+}
+
+export default function Home({ onNavigate }: HomeProps): React.ReactElement {
+  const { ingredients, recipes } = useAppContext();
   const [activeTab, setActiveTab] = useState('all'); // 'all' ou 'priority'
 
   // Filtrer les ingrédients par priorité (expire dans les 7 prochains jours)
@@ -24,9 +27,10 @@ export default function Home(): React.ReactElement {
     )
   );
 
-  const handleAddToTodo = (recipe: Recipe) => {
-    addRecipeToTodo(recipe);
-    alert(`${recipe.name} ajouté à votre liste "À faire cette semaine"`);
+  const handleGoToPlanning = () => {
+    if (onNavigate) {
+      onNavigate('planning');
+    }
   };
 
   return (
@@ -54,9 +58,9 @@ export default function Home(): React.ReactElement {
                 <p><strong>Difficulté:</strong> {recipe.difficulty}</p>
                 <p><strong>Ingrédients:</strong> {recipe.ingredients.join(', ')}</p>
                 <button
-                  onClick={() => handleAddToTodo(recipe)}
+                  onClick={handleGoToPlanning}
                   style={{
-                    backgroundColor: '#28a745',
+                    backgroundColor: '#007bff',
                     color: 'white',
                     border: 'none',
                     padding: '0.5rem 1rem',
@@ -64,7 +68,7 @@ export default function Home(): React.ReactElement {
                     cursor: 'pointer'
                   }}
                 >
-                  Ajouter à mes recettes
+                  Aller au Planning
                 </button>
               </div>
             ))}
