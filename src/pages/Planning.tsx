@@ -6,7 +6,7 @@ type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 's
 type MealTime = 'lunch' | 'dinner';
 
 export default function Planning(): React.ReactElement {
-   const { weeklyPlan, updateWeeklyPlan, selectedRecipes, ingredients } = useAppContext();
+   const { weeklyPlan, updateWeeklyPlan, selectedRecipes } = useAppContext();
    const [searchTerm, setSearchTerm] = useState('');
    const [difficultyFilter, setDifficultyFilter] = useState<'all' | 'easy' | 'medium' | 'hard'>('all');
 
@@ -34,16 +34,7 @@ export default function Planning(): React.ReactElement {
       const matchesDifficulty = difficultyFilter === 'all' || recipe.difficulty === difficultyFilter;
       
       return matchesSearch && matchesDifficulty;
-   });
-
-   // Recettes suggérées basées sur les ingrédients (parmi les sélectionnées)
-   const availableRecipes = filteredRecipes.filter(recipe => 
-      recipe.ingredients.some(ingredient => 
-         ingredients.some(ing => 
-            ing.name.toLowerCase().includes(ingredient.toLowerCase())
-         )
-      )
-   );   const handleDragStart = (e: React.DragEvent, recipe: Recipe) => {
+   });   const handleDragStart = (e: React.DragEvent, recipe: Recipe) => {
       e.dataTransfer.setData('text/plain', JSON.stringify(recipe));
       e.dataTransfer.effectAllowed = 'move';
    };
@@ -176,60 +167,13 @@ export default function Planning(): React.ReactElement {
                   </div>
 
                   <div style={{ fontSize: '0.9rem', color: '#666' }}>
-                     {filteredRecipes.length} recette(s) sélectionnée(s) | {availableRecipes.length} avec vos ingrédients
+                     {filteredRecipes.length} recette(s) sélectionnée(s)
                   </div>
                </div>
 
-               {/* Section recettes suggérées */}
-               {availableRecipes.length > 0 && (
-                  <div style={{ padding: '1rem', borderBottom: '1px solid #eee' }}>
-                     <h3 style={{ margin: '0 0 1rem 0', color: '#28a745', fontSize: '1rem' }}>
-                        ⭐ Suggérées (avec vos ingrédients)
-                     </h3>
-                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                        {availableRecipes.map(recipe => (
-                           <div
-                              key={recipe.id}
-                              draggable
-                              onDragStart={(e) => handleDragStart(e, recipe)}
-                              style={{
-                                 padding: '0.75rem',
-                                 border: '2px solid #28a745',
-                                 borderRadius: '6px',
-                                 backgroundColor: '#f8fff8',
-                                 cursor: 'move',
-                                 transition: 'all 0.2s ease'
-                              }}
-                              onMouseEnter={(e) => {
-                                 e.currentTarget.style.transform = 'translateX(4px)';
-                                 e.currentTarget.style.boxShadow = '0 2px 8px rgba(40,167,69,0.2)';
-                              }}
-                              onMouseLeave={(e) => {
-                                 e.currentTarget.style.transform = 'translateX(0)';
-                                 e.currentTarget.style.boxShadow = 'none';
-                              }}
-                           >
-                              <div style={{ fontWeight: 'bold', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
-                                 {recipe.name}
-                              </div>
-                              <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.5rem' }}>
-                                 {recipe.description}
-                              </div>
-                              <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem' }}>
-                                 <span>⏱️ {recipe.prepTime}min</span>
-                                 <span style={{ color: getDifficultyColor(recipe.difficulty) }}>
-                                    📊 {getDifficultyText(recipe.difficulty)}
-                                 </span>
-                              </div>
-                           </div>
-                        ))}
-                     </div>
-                  </div>
-               )}
-
-               {/* Toutes les recettes sélectionnées */}
+               {/* Liste des recettes sélectionnées */}
                <div style={{ padding: '1rem' }}>
-                  <h3 style={{ margin: '0 0 1rem 0', fontSize: '1rem' }}>📚 Toutes mes recettes sélectionnées</h3>
+                  <h3 style={{ margin: '0 0 1rem 0', fontSize: '1rem' }}>📚 Mes recettes sélectionnées</h3>
                   
                   {selectedRecipes.length === 0 ? (
                      <div style={{ 
@@ -245,9 +189,7 @@ export default function Planning(): React.ReactElement {
                      </div>
                   ) : (
                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '600px', overflowY: 'auto' }}>
-                        {filteredRecipes.map(recipe => {
-                           const isAvailable = availableRecipes.some(ar => ar.id === recipe.id);
-                           return (
+                        {filteredRecipes.map(recipe => (
                               <div
                                  key={recipe.id}
                                  draggable
@@ -258,8 +200,7 @@ export default function Planning(): React.ReactElement {
                                     borderRadius: '6px',
                                     backgroundColor: '#fff',
                                     cursor: 'move',
-                                    transition: 'all 0.2s ease',
-                                    opacity: isAvailable ? 0.7 : 1 // Réduire l'opacité si déjà affiché en haut
+                                    transition: 'all 0.2s ease'
                                  }}
                                  onMouseEnter={(e) => {
                                  e.currentTarget.style.transform = 'translateX(4px)';
@@ -283,8 +224,7 @@ export default function Planning(): React.ReactElement {
                                  </span>
                               </div>
                            </div>
-                        );
-                     })}
+                        ))}
                      </div>
                   )}
                </div>
