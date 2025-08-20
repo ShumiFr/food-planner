@@ -7,9 +7,12 @@ interface AppContextType {
    ingredients: Ingredient[];
    recipes: Recipe[];
    weeklyPlan: WeeklyPlan[];
+   selectedRecipes: Recipe[];
    addIngredient: (ingredient: Omit<Ingredient, 'id' | 'addedDate'>) => void;
    removeIngredient: (id: string) => void;
    updateWeeklyPlan: (plan: WeeklyPlan) => void;
+   addSelectedRecipe: (recipe: Recipe) => void;
+   removeSelectedRecipe: (recipeId: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -145,6 +148,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       }
    ]);
    const [weeklyPlan, setWeeklyPlan] = useLocalStorage<WeeklyPlan[]>('weeklyPlan', []);
+   const [selectedRecipes, setSelectedRecipes] = useLocalStorage<Recipe[]>('selectedRecipes', []);
 
    const addIngredient = (ingredient: Omit<Ingredient, 'id' | 'addedDate'>) => {
       const newIngredient: Ingredient = {
@@ -157,6 +161,16 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
    const removeIngredient = (id: string) => {
       setIngredients(ingredients.filter(ing => ing.id !== id));
+   };
+
+   const addSelectedRecipe = (recipe: Recipe) => {
+      if (!selectedRecipes.some(r => r.id === recipe.id)) {
+         setSelectedRecipes([...selectedRecipes, recipe]);
+      }
+   };
+
+   const removeSelectedRecipe = (recipeId: string) => {
+      setSelectedRecipes(selectedRecipes.filter(r => r.id !== recipeId));
    };
 
    const updateWeeklyPlan = (plan: WeeklyPlan) => {
@@ -175,9 +189,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
          ingredients,
          recipes,
          weeklyPlan,
+         selectedRecipes,
          addIngredient,
          removeIngredient,
          updateWeeklyPlan,
+         addSelectedRecipe,
+         removeSelectedRecipe,
       }}>
          {children}
       </AppContext.Provider>

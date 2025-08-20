@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppProvider';
+import type { Recipe } from '../types/types';
 
 interface HomeProps {
   onNavigate?: (page: string) => void;
 }
 
 export default function Home({ onNavigate }: HomeProps): React.ReactElement {
-  const { ingredients, recipes } = useAppContext();
+  const { ingredients, recipes, selectedRecipes, addSelectedRecipe, removeSelectedRecipe } = useAppContext();
   const [activeTab, setActiveTab] = useState('all'); // 'all' ou 'priority'
 
   // Filtrer les ingrédients par priorité (expire dans les 7 prochains jours)
@@ -27,6 +28,15 @@ export default function Home({ onNavigate }: HomeProps): React.ReactElement {
     )
   );
 
+  const handleToggleRecipe = (recipe: Recipe) => {
+    const isSelected = selectedRecipes.some(r => r.id === recipe.id);
+    if (isSelected) {
+      removeSelectedRecipe(recipe.id);
+    } else {
+      addSelectedRecipe(recipe);
+    }
+  };
+
   const handleGoToPlanning = () => {
     if (onNavigate) {
       onNavigate('planning');
@@ -37,6 +47,50 @@ export default function Home({ onNavigate }: HomeProps): React.ReactElement {
     <div style={{ padding: '2rem' }}>
       <h1>🍽️ Food Planner - Accueil</h1>
 
+      {/* Résumé des recettes sélectionnées */}
+      {selectedRecipes.length > 0 && (
+        <div style={{
+          backgroundColor: '#e7f3ff',
+          border: '1px solid #bee5eb',
+          borderRadius: '8px',
+          padding: '1rem',
+          marginBottom: '2rem'
+        }}>
+          <h3 style={{ margin: '0 0 0.5rem 0', color: '#0c5460' }}>
+            ✅ {selectedRecipes.length} recette(s) sélectionnée(s)
+          </h3>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            {selectedRecipes.map(recipe => (
+              <span key={recipe.id} style={{
+                backgroundColor: '#28a745',
+                color: 'white',
+                padding: '0.25rem 0.5rem',
+                borderRadius: '12px',
+                fontSize: '0.8rem'
+              }}>
+                {recipe.name}
+              </span>
+            ))}
+          </div>
+          <button
+            onClick={handleGoToPlanning}
+            style={{
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              marginTop: '1rem'
+            }}
+          >
+            📅 Aller au Planning ({selectedRecipes.length} recettes)
+          </button>
+        </div>
+      )}
+
       <div style={{ display: 'flex', gap: '2rem', marginTop: '2rem' }}>
         {/* Section Recettes */}
         <div style={{ flex: 2 }}>
@@ -46,32 +100,54 @@ export default function Home({ onNavigate }: HomeProps): React.ReactElement {
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
-            {availableRecipes.map(recipe => (
+            {availableRecipes.map(recipe => {
+              const isSelected = selectedRecipes.some(r => r.id === recipe.id);
+              return (
               <div key={recipe.id} style={{
-                border: '1px solid #ddd',
+                border: `2px solid ${isSelected ? '#28a745' : '#ddd'}`,
                 borderRadius: '8px',
                 padding: '1rem',
-                backgroundColor: '#fff'
+                backgroundColor: isSelected ? '#f8fff8' : '#fff'
               }}>
                 <h3>{recipe.name}</h3>
                 <p><strong>Temps de préparation:</strong> {recipe.prepTime} min</p>
                 <p><strong>Difficulté:</strong> {recipe.difficulty}</p>
                 <p><strong>Ingrédients:</strong> {recipe.ingredients.join(', ')}</p>
-                <button
-                  onClick={handleGoToPlanning}
-                  style={{
-                    backgroundColor: '#007bff',
-                    color: 'white',
-                    border: 'none',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Aller au Planning
-                </button>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    onClick={() => handleToggleRecipe(recipe)}
+                    style={{
+                      backgroundColor: isSelected ? '#dc3545' : '#28a745',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      flex: 1
+                    }}
+                  >
+                    {isSelected ? '❌ Retirer' : '✅ Sélectionner'}
+                  </button>
+                  {selectedRecipes.length > 0 && (
+                    <button
+                      onClick={handleGoToPlanning}
+                      style={{
+                        backgroundColor: '#007bff',
+                        color: 'white',
+                        border: 'none',
+                        padding: '0.5rem 1rem',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        flex: 1
+                      }}
+                    >
+                      📅 Planning
+                    </button>
+                  )}
+                </div>
               </div>
-            ))}
+              );
+            })}
           </div>
 
           {availableRecipes.length === 0 && (

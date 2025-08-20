@@ -6,7 +6,7 @@ type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 's
 type MealTime = 'lunch' | 'dinner';
 
 export default function Planning(): React.ReactElement {
-   const { weeklyPlan, updateWeeklyPlan, recipes, ingredients } = useAppContext();
+   const { weeklyPlan, updateWeeklyPlan, selectedRecipes, ingredients } = useAppContext();
    const [searchTerm, setSearchTerm] = useState('');
    const [difficultyFilter, setDifficultyFilter] = useState<'all' | 'easy' | 'medium' | 'hard'>('all');
 
@@ -25,27 +25,25 @@ export default function Planning(): React.ReactElement {
       { id: 'dinner', label: 'Dîner', icon: '🌙' }
    ];
 
-   // Filtrer les recettes
-   const filteredRecipes = recipes.filter(recipe => {
+   // Filtrer les recettes sélectionnées
+   const filteredRecipes = selectedRecipes.filter(recipe => {
       const matchesSearch = recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-         recipe.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-         recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm.toLowerCase()));
-
+                           recipe.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm.toLowerCase()));
+      
       const matchesDifficulty = difficultyFilter === 'all' || recipe.difficulty === difficultyFilter;
-
+      
       return matchesSearch && matchesDifficulty;
    });
 
-   // Recettes suggérées basées sur les ingrédients
-   const availableRecipes = filteredRecipes.filter(recipe =>
-      recipe.ingredients.some(ingredient =>
-         ingredients.some(ing =>
+   // Recettes suggérées basées sur les ingrédients (parmi les sélectionnées)
+   const availableRecipes = filteredRecipes.filter(recipe => 
+      recipe.ingredients.some(ingredient => 
+         ingredients.some(ing => 
             ing.name.toLowerCase().includes(ingredient.toLowerCase())
          )
       )
-   );
-
-   const handleDragStart = (e: React.DragEvent, recipe: Recipe) => {
+   );   const handleDragStart = (e: React.DragEvent, recipe: Recipe) => {
       e.dataTransfer.setData('text/plain', JSON.stringify(recipe));
       e.dataTransfer.effectAllowed = 'move';
    };
@@ -142,7 +140,7 @@ export default function Planning(): React.ReactElement {
                   borderBottom: '1px solid #ddd',
                   borderRadius: '8px 8px 0 0'
                }}>
-                  <h2 style={{ margin: '0 0 1rem 0' }}>🍽️ Galerie des recettes</h2>
+                  <h2 style={{ margin: '0 0 1rem 0' }}>🍽️ Mes recettes sélectionnées</h2>
 
                   {/* Recherche et filtres */}
                   <div style={{ marginBottom: '1rem' }}>
@@ -178,7 +176,7 @@ export default function Planning(): React.ReactElement {
                   </div>
 
                   <div style={{ fontSize: '0.9rem', color: '#666' }}>
-                     {filteredRecipes.length} recette(s) | {availableRecipes.length} avec vos ingrédients
+                     {filteredRecipes.length} recette(s) sélectionnée(s) | {availableRecipes.length} avec vos ingrédients
                   </div>
                </div>
 
@@ -229,27 +227,41 @@ export default function Planning(): React.ReactElement {
                   </div>
                )}
 
-               {/* Toutes les recettes */}
+               {/* Toutes les recettes sélectionnées */}
                <div style={{ padding: '1rem' }}>
-                  <h3 style={{ margin: '0 0 1rem 0', fontSize: '1rem' }}>📚 Toutes les recettes</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '600px', overflowY: 'auto' }}>
-                     {filteredRecipes.map(recipe => {
-                        const isAvailable = availableRecipes.some(ar => ar.id === recipe.id);
-                        return (
-                           <div
-                              key={recipe.id}
-                              draggable
-                              onDragStart={(e) => handleDragStart(e, recipe)}
-                              style={{
-                                 padding: '0.75rem',
-                                 border: '1px solid #ddd',
-                                 borderRadius: '6px',
-                                 backgroundColor: '#fff',
-                                 cursor: 'move',
-                                 transition: 'all 0.2s ease',
-                                 opacity: isAvailable ? 0.7 : 1 // Réduire l'opacité si déjà affiché en haut
-                              }}
-                              onMouseEnter={(e) => {
+                  <h3 style={{ margin: '0 0 1rem 0', fontSize: '1rem' }}>📚 Toutes mes recettes sélectionnées</h3>
+                  
+                  {selectedRecipes.length === 0 ? (
+                     <div style={{ 
+                        textAlign: 'center', 
+                        padding: '2rem', 
+                        color: '#666',
+                        backgroundColor: '#f8f9fa',
+                        borderRadius: '8px'
+                     }}>
+                        <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🍽️</div>
+                        <h4>Aucune recette sélectionnée</h4>
+                        <p>Retournez sur la page d'accueil pour sélectionner des recettes à planifier.</p>
+                     </div>
+                  ) : (
+                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '600px', overflowY: 'auto' }}>
+                        {filteredRecipes.map(recipe => {
+                           const isAvailable = availableRecipes.some(ar => ar.id === recipe.id);
+                           return (
+                              <div
+                                 key={recipe.id}
+                                 draggable
+                                 onDragStart={(e) => handleDragStart(e, recipe)}
+                                 style={{
+                                    padding: '0.75rem',
+                                    border: '1px solid #ddd',
+                                    borderRadius: '6px',
+                                    backgroundColor: '#fff',
+                                    cursor: 'move',
+                                    transition: 'all 0.2s ease',
+                                    opacity: isAvailable ? 0.7 : 1 // Réduire l'opacité si déjà affiché en haut
+                                 }}
+                                 onMouseEnter={(e) => {
                                  e.currentTarget.style.transform = 'translateX(4px)';
                                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
                               }}
@@ -273,7 +285,8 @@ export default function Planning(): React.ReactElement {
                            </div>
                         );
                      })}
-                  </div>
+                     </div>
+                  )}
                </div>
             </div>
 
