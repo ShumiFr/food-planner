@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppProviderApi';
 import type { Recipe } from '../types/types';
 
 interface HomeProps {
-  onNavigate?: (page: string) => void;
+  onNavigate?: (page: string, data?: unknown) => void;
 }
 
 export default function Home({ onNavigate }: HomeProps): React.ReactElement {
@@ -248,7 +248,7 @@ export default function Home({ onNavigate }: HomeProps): React.ReactElement {
                   position: 'relative',
                   cursor: 'pointer'
                 }}
-                onClick={() => handleRecipeToggle(recipe)}
+                onClick={() => onNavigate?.('recipe-detail', { recipeId: recipe.id })}
               >
                 {/* Badge de correspondance */}
                 <div style={{
@@ -310,6 +310,7 @@ export default function Home({ onNavigate }: HomeProps): React.ReactElement {
                     color: '#6c757d'
                   }}>
                     <span>⏱️ {recipe.prepTime} min</span>
+                    <span>👥 {recipe.coversCount || 2} personnes</span>
                     <span style={{ textTransform: 'capitalize' }}>
                       {recipe.difficulty === 'easy' ? '🟢 Facile' :
                         recipe.difficulty === 'medium' ? '🟡 Moyen' : '🔴 Difficile'}
@@ -366,6 +367,29 @@ export default function Home({ onNavigate }: HomeProps): React.ReactElement {
                       )}
                     </div>
                   </div>
+
+                  {/* Bouton d'action */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // Empêcher la propagation vers le div parent
+                      handleRecipeToggle(recipe);
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      marginTop: '1rem',
+                      backgroundColor: selected ? '#dc3545' : '#28a745',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem',
+                      fontWeight: '500',
+                      transition: 'background-color 0.2s ease'
+                    }}
+                  >
+                    {selected ? '❌ Retirer' : '➕ Ajouter'}
+                  </button>
                 </div>
               </div>
             );

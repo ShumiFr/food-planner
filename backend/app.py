@@ -109,7 +109,7 @@ def get_recipes():
                         "difficulty": "medium",  # par défaut
                         "image": recipe.imageUrl if hasattr(recipe, 'imageUrl') else None,
                         "cookingTime": recipe.cookingTime if hasattr(recipe, 'cookingTime') else 0,
-                        "coversCount": recipe.coversCount if hasattr(recipe, 'coversCount') else 4
+                        "coversCount": 2  # Toujours pour 2 personnes
                     }
                     formatted_recipes.append(formatted_recipe)
                 except Exception as e:
@@ -175,7 +175,7 @@ def get_recipe_details(recipe_id):
             "difficulty": "medium",
             "image": recipe.imageUrl if hasattr(recipe, 'imageUrl') else None,
             "cookingTime": recipe.cookingTime if hasattr(recipe, 'cookingTime') else 0,
-            "coversCount": recipe.coversCount if hasattr(recipe, 'coversCount') else 4
+            "coversCount": 2  # Toujours pour 2 personnes
         }
         
         return jsonify({

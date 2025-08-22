@@ -14,6 +14,8 @@ export interface Recipe {
    ingredients: string[];
    instructions: string;
    prepTime: number;
+   cookingTime?: number; // Optionnel car peut ne pas être présent dans toutes les sources
+   coversCount?: number; // Optionnel car peut ne pas être présent dans toutes les sources
    difficulty: 'easy' | 'medium' | 'hard';
    image?: string;
 }

@@ -1,0 +1,614 @@
+/* Reset et styles de base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f9fa;
+}
+
+/* Styles pour les résultats de recherche */
+.result-card {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 420px; /* Ajouté pour une hauteur minimum avec les images plus grandes */
+}
+/* Styles pour les classes Tailwind utilisées */
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.bg-gradient-to-br {
+  background: linear-gradient(to bottom right, var(--tw-gradient-from), var(--tw-gradient-to));
+}
+
+.from-green-50 {
+  --tw-gradient-from: #f0fdf4;
+  --tw-gradient-to: #dbeafe;
+}
+
+.to-blue-50 {
+  --tw-gradient-to: #eff6ff;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+.max-w-6xl {
+  max-width: 72rem;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
+}
+
+.mb-12 {
+  margin-bottom: 3rem;
+}
+
+.mb-16 {
+  margin-bottom: 4rem;
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.text-gray-800 {
+  color: #1f2937;
+}
+
+.text-gray-600 {
+  color: #4b5563;
+}
+
+.grid {
+  display: grid;
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.gap-6 {
+  gap: 1.5rem;
+}
+
+/* Responsive gap pour les résultats */
+.results-grid {
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .results-grid {
+    gap: 1.2rem;
+  }
+}
+
+/* Responsive design */
+@media (min-width: 768px) {
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  
+  .md\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  
+  .lg\:grid-cols-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+/* Styles pour les boutons de catégories */
+.category-button {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  color: white;
+  font-weight: 600;
+  font-size: 1.125rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.category-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.category-button .overlay {
+  position: absolute;
+  inset: 0;
+  background-color: black;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.category-button:hover .overlay {
+  opacity: 0.2;
+}
+
+.category-button .content {
+  position: relative;
+  z-index: 10;
+}
+
+.category-button .emoji {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.category-button .label {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.category-button .bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: white;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.category-button:hover .bottom-bar {
+  opacity: 0.3;
+}
+
+/* Styles pour les boutons de protéines */
+.protein-button {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.protein-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.protein-button .emoji {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.protein-button .label {
+  font-weight: bold;
+  font-size: 0.875rem;
+}
+
+/* Styles pour les boutons de légumes */
+.vegetable-button {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  background: white;
+  border: 2px solid #bbf7d0;
+  color: #1f2937;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  text-align: center;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.vegetable-button:hover {
+  transform: scale(1.05);
+  border-color: #4ade80;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.vegetable-button .bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, #f0fdf4, #dcfce7);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.vegetable-button:hover .bg-overlay {
+  opacity: 1;
+}
+
+.vegetable-button .content {
+  position: relative;
+  z-index: 10;
+}
+
+.vegetable-button .emoji {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.vegetable-button .label {
+  font-weight: bold;
+  font-size: 0.875rem;
+  text-transform: capitalize;
+}
+
+/* Styles pour la section d'encouragement */
+.encouragement-section {
+  text-align: center;
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  margin-top: 2rem;
+}
+
+.encouragement-section .chef-emoji {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.encouragement-section h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.encouragement-section p {
+  color: #6b7280;
+  max-width: 28rem;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* Animation de chargement */
+.loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 0.125rem solid #f3f3f3;
+  border-top: 0.125rem solid #16a34a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Transition fluide pour le changement de vue */
+.discover-container {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Amélioration des interactions */
+.category-button:active,
+.protein-button:active,
+.vegetable-button:active {
+  transform: scale(0.98);
+}
+
+.result-card {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.result-card .image-container {
+  position: relative;
+  height: 200px; /* Augmenté de 8rem (128px) à 200px pour des images plus grandes */
+  background-color: #f3f4f6;
+  border-radius: 12px; /* Ajouté pour des coins arrondis */
+  overflow: hidden; /* Ajouté pour contenir les coins arrondis */
+}
+
+.result-card .image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px; /* Ajouté pour correspondre au conteneur */
+}
+
+.result-card .placeholder-emoji {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem; /* Augmenté de 2.5rem à 3.5rem pour correspondre aux images plus grandes */
+  background-color: #f8f9fa;
+  border-radius: 12px; /* Ajouté pour correspondre au conteneur */
+}
+
+.result-card .match-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.result-card .content {
+  padding: 1.25rem; /* Augmenté de 1rem à 1.25rem pour plus d'espace */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.result-card .title {
+  font-size: 1rem; /* Réduit de 1.25rem à 1rem */
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.3;
+  min-height: 2.6rem; /* Pour maintenir la hauteur même avec une ligne */
+}
+
+.result-card .description {
+  color: #6b7280;
+  font-size: 0.8rem; /* Réduit de 0.875rem à 0.8rem */
+  margin-bottom: 0.75rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.3;
+  min-height: 2.1rem; /* Pour maintenir la hauteur */
+}
+
+.result-card .info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.result-card .info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.result-card .action-button {
+  width: 100%;
+  padding: 0.75rem 1rem; /* Augmenté pour un meilleur aspect */
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem; /* Légèrement augmenté */
+  transition: background-color 0.3s;
+  border: none;
+  cursor: pointer;
+  margin-top: auto; /* Pousse le bouton en bas de la carte */
+}
+
+.result-card .action-button.selected {
+  background-color: #ef4444;
+  color: white;
+}
+
+.result-card .action-button.selected:hover {
+  background-color: #dc2626;
+}
+
+.result-card .action-button.unselected {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.result-card .action-button.unselected:hover {
+  background-color: #2563eb;
+}
+
+/* Styles pour le bouton retour */
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 1rem;
+  background: white;
+  border-radius: 9999px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  color: #374151;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.back-button:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  color: #111827;
+}
+
+/* Message d'erreur et état vide */
+.error-message {
+  text-align: center;
+  color: #dc2626;
+  margin-bottom: 1rem;
+}
+
+.retry-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.retry-button:hover {
+  background-color: #2563eb;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.empty-state .empty-emoji {
+  font-size: 3.75rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.empty-state .try-again-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Styles de couleur pour les badges */
+.bg-green-500 {
+  background-color: #10b981;
+}
+
+.bg-yellow-500 {
+  background-color: #f59e0b;
+}
+
+.bg-orange-500 {
+  background-color: #f97316;
+}
+
+.bg-red-500 {
+  background-color: #ef4444;
+}
+
+.text-white {
+  color: white;
+}
+
+.empty-state .try-again-button:hover {
+  background-color: #2563eb;
+}
