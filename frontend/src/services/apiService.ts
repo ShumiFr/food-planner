@@ -44,7 +44,7 @@ class ApiService {
     try {
       // Créer un AbortController pour gérer les timeouts
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 secondes timeout
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 secondes timeout (réduit de 30s)
       
       const response = await fetch(url, {
         headers: {
@@ -71,7 +71,7 @@ class ApiService {
     } catch (error) {
       if (error instanceof Error) {
         if (error.name === 'AbortError') {
-          console.error(`Request timeout for ${endpoint} (30s)`);
+          console.error(`Request timeout for ${endpoint} (15s)`);
           throw new Error('Request timed out - please try again');
         }
         console.error(`API request failed for ${endpoint}:`, error.message);

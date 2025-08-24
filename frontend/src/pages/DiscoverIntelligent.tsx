@@ -289,11 +289,34 @@ const DiscoverIntelligent: React.FC<DiscoverIntelligentProps> = ({ onNavigate })
       return (
          <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-6">
             <div className="max-w-6xl mx-auto">
-               <div className="text-center">
-                  <div className="loading-spinner"></div>
-                  <p style={{ marginTop: '1rem', color: '#6b7280' }}>
-                     {selectedCategory ? `Recherche des recettes ${selectedCategory}...` : 'Chargement...'}
+               <div className="text-center" style={{ paddingTop: '3rem' }}>
+                  <div style={{
+                     width: '60px',
+                     height: '60px',
+                     border: '6px solid #f3f3f3',
+                     borderTop: '6px solid #10b981',
+                     borderRadius: '50%',
+                     animation: 'spin 1s linear infinite',
+                     margin: '0 auto 1.5rem'
+                  }}></div>
+                  <h3 style={{ color: '#10b981', marginBottom: '0.5rem' }}>
+                     {selectedCategory ? `Recherche des recettes ${selectedCategory}...` : 'Chargement des recettes...'}
+                  </h3>
+                  <p style={{ color: '#6b7280', marginBottom: '1.5rem' }}>
+                     Filtrage intelligent en cours...
                   </p>
+                  {!selectedCategory && (
+                     <div style={{
+                        display: 'inline-block',
+                        padding: '0.75rem 1rem',
+                        backgroundColor: '#ecfdf5',
+                        borderRadius: '8px',
+                        color: '#047857',
+                        fontSize: '0.9rem'
+                     }}>
+                        🚀 Optimisé avec cache - Chargement plus rapide !
+                     </div>
+                  )}
                </div>
             </div>
          </div>

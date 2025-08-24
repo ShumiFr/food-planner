@@ -101,7 +101,8 @@ export default function Home({ onNavigate }: HomeProps): React.ReactElement {
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
-        gap: '1rem'
+        gap: '1rem',
+        padding: '2rem'
       }}>
         <div style={{
           width: '50px',
@@ -111,7 +112,23 @@ export default function Home({ onNavigate }: HomeProps): React.ReactElement {
           borderRadius: '50%',
           animation: 'spin 1s linear infinite'
         }}></div>
-        <p>Chargement de vos recettes personnalisées...</p>
+        <h3 style={{ color: '#007bff', marginBottom: '0.5rem', textAlign: 'center' }}>
+          Chargement de vos recettes personnalisées...
+        </h3>
+        <p style={{ color: '#6c757d', textAlign: 'center', maxWidth: '500px', lineHeight: '1.5' }}>
+          Optimisation en cours - Les recettes sont mises en cache pour un chargement plus rapide lors des prochaines visites.
+        </p>
+        <div style={{
+          marginTop: '1rem',
+          padding: '0.75rem 1rem',
+          backgroundColor: '#e3f2fd',
+          borderRadius: '8px',
+          color: '#1565c0',
+          fontSize: '0.9rem',
+          textAlign: 'center'
+        }}>
+          💡 Premier chargement : 10-15s • Suivants : instantané grâce au cache
+        </div>
       </div>
     );
   }

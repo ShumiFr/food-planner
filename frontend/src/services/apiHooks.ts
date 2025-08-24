@@ -5,16 +5,19 @@ import type { Recipe } from '../types/types';
 // Hook pour récupérer toutes les recettes
 export const useRecipes = (searchQuery?: string, limit?: number) => {
   const [state, setState] = useState<ApiState<Recipe[]>>(createInitialApiState);
+  const [retryCount, setRetryCount] = useState(0);
 
-  const fetchRecipes = useCallback(async () => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
+  const fetchRecipes = useCallback(async (isRetry = false) => {
+    if (!isRetry) {
+      setState(prev => ({ ...prev, loading: true, error: null }));
+    }
     
     try {
       let response;
       if (searchQuery && searchQuery.trim()) {
-        response = await apiService.searchRecipes(searchQuery.trim(), limit);
+        response = await apiService.searchRecipes(searchQuery.trim(), limit || 50); // Limite par défaut réduite
       } else {
-        response = await apiService.getRecipes({ limit });
+        response = await apiService.getRecipes({ limit: limit || 50 }); // Limite par défaut réduite
       }
       
       setState({
@@ -22,14 +25,29 @@ export const useRecipes = (searchQuery?: string, limit?: number) => {
         loading: false,
         error: null
       });
+      setRetryCount(0); // Reset retry count on success
     } catch (error) {
+      const apiError = handleApiError(error, 'useRecipes');
+      
+      // Retry automatique avec limite plus faible en cas de timeout
+      if (apiError.message.includes('timeout') && retryCount < 2) {
+        console.warn(`Retry attempt ${retryCount + 1} with reduced limit`);
+        setRetryCount(prev => prev + 1);
+        
+        // Retry avec une limite encore plus faible
+        setTimeout(() => {
+          fetchRecipes(true);
+        }, 1000);
+        return;
+      }
+      
       setState({
         data: null,
         loading: false,
-        error: handleApiError(error, 'useRecipes')
+        error: apiError
       });
     }
-  }, [searchQuery, limit]);
+  }, [searchQuery, limit, retryCount]);
 
   useEffect(() => {
     fetchRecipes();
@@ -39,7 +57,10 @@ export const useRecipes = (searchQuery?: string, limit?: number) => {
     recipes: state.data,
     loading: state.loading,
     error: state.error,
-    refetch: fetchRecipes
+    refetch: () => {
+      setRetryCount(0);
+      fetchRecipes();
+    }
   };
 };
 

@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from jow_api import Jow
 import logging
+import time
 
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)
@@ -15,6 +16,13 @@ CORS(app)  # Permettre les requêtes CORS depuis le frontend React
 # Instance de l'API Jow - initialisation lazy
 jow = None
 
+# Cache en mémoire pour les recettes
+recipe_cache = {
+    'data': None,
+    'timestamp': None,
+    'ttl': 300  # 5 minutes de cache
+}
+
 def get_jow():
     """Initialise Jow API si nécessaire"""
     global jow
@@ -24,60 +32,102 @@ def get_jow():
         logger.info("Jow API initialized successfully!")
     return jow
 
+def is_cache_valid():
+    """Vérifie si le cache est encore valide"""
+    if recipe_cache['data'] is None or recipe_cache['timestamp'] is None:
+        return False
+    
+    elapsed = time.time() - recipe_cache['timestamp']
+    return elapsed < recipe_cache['ttl']
+
+def get_cached_recipes():
+    """Récupère les recettes du cache si valides"""
+    if is_cache_valid():
+        logger.info(f"Returning {len(recipe_cache['data'])} recipes from cache")
+        return recipe_cache['data']
+    return None
+
+def cache_recipes(recipes):
+    """Met les recettes en cache"""
+    recipe_cache['data'] = recipes
+    recipe_cache['timestamp'] = time.time()
+    logger.info(f"Cached {len(recipes)} recipes")
+
 @app.route('/health', methods=['GET'])
 def health_check():
-    """Point de santé de l'API"""
+    """Point de santé de l'API avec informations sur le cache"""
+    cache_status = "valid" if is_cache_valid() else "expired"
+    cache_size = len(recipe_cache['data']) if recipe_cache['data'] else 0
+    
     return jsonify({
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
-        "service": "Food Planner API"
+        "service": "Food Planner API",
+        "cache": {
+            "status": cache_status,
+            "recipes_count": cache_size,
+            "ttl": recipe_cache['ttl']
+        }
     })
 
 @app.route('/api/recipes', methods=['GET'])
 def get_recipes():
-    """Récupérer toutes les recettes disponibles"""
+    """Récupérer toutes les recettes disponibles avec cache optimisé"""
     try:
-        # Initialiser Jow API si nécessaire
-        jow_api = get_jow()
-        
         # Paramètres de la requête
-        limit = request.args.get('limit', type=int)  # Pas de limite par défaut
+        limit = request.args.get('limit', type=int)  
         offset = request.args.get('offset', 0, type=int)
         search = request.args.get('search', '')
         
-        # Si pas de limite spécifiée, utiliser une grande valeur pour récupérer toutes les recettes
-        if limit is None:
-            limit = 1000  # Valeur élevée pour récupérer un maximum de recettes
-        
-        logger.info(f"Fetching recipes - limit: {limit}, offset: {offset}, search: '{search}'")
-        
-        # Si aucun terme de recherche spécifique, combiner plusieurs recherches génériques
+        # Pour les recherches spécifiques, ne pas utiliser le cache
         if search:
-            # Recherche spécifique
-            recipes_data = jow_api.search(to_search=search, limit=limit)
+            logger.info(f"Specific search for: '{search}'")
+            jow_api = get_jow()
+            recipes_data = jow_api.search(to_search=search, limit=min(limit or 50, 100))
         else:
-            # Combinaison de plusieurs termes génériques pour maximiser les résultats
+            # Vérifier le cache d'abord
+            cached_recipes = get_cached_recipes()
+            if cached_recipes:
+                # Appliquer limite et offset sur les données cachées
+                start_idx = offset
+                end_idx = start_idx + (limit or len(cached_recipes))
+                recipes_data = cached_recipes[start_idx:end_idx]
+                
+                return jsonify({
+                    "success": True,
+                    "data": recipes_data,
+                    "total": len(cached_recipes),
+                    "limit": limit,
+                    "offset": offset,
+                    "cached": True
+                })
+            
+            # Cache expiré ou inexistant - récupérer de nouvelles recettes
+            logger.info("Cache miss - fetching new recipes from Jow API")
+            jow_api = get_jow()
+            
+            # Stratégie optimisée : moins de termes, plus ciblés
             search_terms = [
-                'plat', 'cuisine', 'recette', 'poulet', 'poisson', 'légume', 'viande', 'dessert',
-                'salade', 'soupe', 'pâtes', 'riz', 'pain', 'fromage', 'œuf', 'fruit',
-                'bœuf', 'porc', 'agneau', 'crevette', 'saumon', 'légumes', 'épice',
-                'sauce', 'gratin', 'tarte', 'gâteau', 'crème'
+                'poulet', 'bœuf', 'poisson', 'pâtes', 'riz', 'salade', 
+                'légumes', 'dessert', 'soupe', 'gratin'
             ]
-            all_recipes = {}  # Dictionnaire pour éviter les doublons (clé = id)
+            all_recipes = {}
+            recipes_per_term = 15  # Limite réduite par terme pour éviter les timeouts
             
-            recipes_per_term = max(1, limit // len(search_terms))  # Répartir la limite entre les termes
-            
-            for term in search_terms:
+            for i, term in enumerate(search_terms):
                 try:
+                    logger.info(f"Searching for '{term}' ({i+1}/{len(search_terms)})")
                     term_recipes = jow_api.search(to_search=term, limit=recipes_per_term)
+                    
                     if term_recipes:
                         for recipe in term_recipes:
                             recipe_id = str(recipe.id) if hasattr(recipe, 'id') else f"{term}_{len(all_recipes)}"
-                            if recipe_id not in all_recipes:  # Éviter les doublons
+                            if recipe_id not in all_recipes:
                                 all_recipes[recipe_id] = recipe
                                 
-                    # Si on a atteint la limite, arrêter
-                    if len(all_recipes) >= limit:
+                    # Limiter à 100 recettes max pour éviter les timeouts
+                    if len(all_recipes) >= 100:
+                        logger.info("Reached 100 recipes limit, stopping search")
                         break
                         
                 except Exception as e:
@@ -85,7 +135,7 @@ def get_recipes():
                     continue
             
             recipes_data = list(all_recipes.values())
-            logger.info(f"Combined search returned {len(recipes_data)} unique recipes from {len(search_terms)} terms")
+            logger.info(f"Fetched {len(recipes_data)} unique recipes from {len(search_terms)} terms")
         
         # Transformation des données au format attendu par le frontend
         formatted_recipes = []
@@ -115,15 +165,28 @@ def get_recipes():
                 except Exception as e:
                     logger.warning(f"Error formatting recipe: {e}")
                     continue
+
+        # Mettre en cache uniquement pour les recherches génériques (pas de search term)
+        if not search and formatted_recipes:
+            cache_recipes(formatted_recipes)
+
+        # Appliquer limite et offset
+        if not search:
+            start_idx = offset
+            end_idx = start_idx + (limit or len(formatted_recipes))
+            result_recipes = formatted_recipes[start_idx:end_idx]
+        else:
+            result_recipes = formatted_recipes
         
-        logger.info(f"Successfully fetched {len(formatted_recipes)} recipes")
+        logger.info(f"Successfully returned {len(result_recipes)} recipes")
         
         return jsonify({
             "success": True,
-            "data": formatted_recipes,
+            "data": result_recipes,
             "total": len(formatted_recipes),
             "limit": limit,
-            "offset": offset
+            "offset": offset,
+            "cached": False
         })
         
     except Exception as e:
@@ -131,6 +194,26 @@ def get_recipes():
         return jsonify({
             "success": False,
             "error": "Failed to fetch recipes",
+            "message": str(e)
+        }), 500
+
+@app.route('/api/cache/clear', methods=['POST'])
+def clear_cache():
+    """Vider le cache des recettes"""
+    try:
+        recipe_cache['data'] = None
+        recipe_cache['timestamp'] = None
+        logger.info("Recipe cache cleared manually")
+        
+        return jsonify({
+            "success": True,
+            "message": "Cache cleared successfully"
+        })
+    except Exception as e:
+        logger.error(f"Error clearing cache: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": "Failed to clear cache",
             "message": str(e)
         }), 500
 
